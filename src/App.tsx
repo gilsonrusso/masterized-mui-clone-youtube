@@ -33,6 +33,10 @@ import VideoLibrary from '@mui/icons-material/VideoLibrary'
 
 import AddCircle from '@mui/icons-material/AddCircle'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
+import { useEffect, useState } from 'react'
+import { UserService } from './services/userServices'
+import type { User } from './types/user.types'
+
 const BoxStyled = styled(Box)<BoxProps>(({ theme }) => ({
   height: '100vh',
   backgroundColor: theme.palette.background.default,
@@ -186,6 +190,35 @@ const videos = [
 
 function App() {
   const theme = useTheme()
+
+  const [users, setUsers] = useState<User[]>([])
+  const controller = new AbortController()
+
+  async function fetchUsers() {
+    try {
+      const response = await UserService.getAll(controller.signal)
+      setUsers(response)
+    } catch (error: unknown) {
+      if (error instanceof Error && error.name === 'CanceledError') {
+        console.warn('Requisição cancelada')
+      } else if (error instanceof Error) {
+        console.error('Erro geral:', error.message)
+      } else {
+        console.error('Erro desconhecido:', error)
+      }
+    }
+  }
+
+  useEffect(() => {
+    fetchUsers()
+
+    return () => {
+      controller.abort()
+      // abortManager.abort('getAllUsers')
+    }
+  }, [])
+
+  console.log('::::::users', users)
 
   return (
     <BoxStyled>
