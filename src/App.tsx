@@ -19,6 +19,7 @@ import {
   ListItemIcon,
   ListItemText,
   ListSubheader,
+  Slide,
   Toolbar,
   Typography,
   type AppBarProps,
@@ -26,7 +27,7 @@ import {
   type IconButtonProps,
   type ListItemTextProps,
 } from '@mui/material'
-import { styled, useTheme } from '@mui/material/styles'
+import { keyframes, styled, useTheme } from '@mui/material/styles'
 
 import History from '@mui/icons-material/History'
 import VideoLibrary from '@mui/icons-material/VideoLibrary'
@@ -36,6 +37,28 @@ import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { useEffect, useState } from 'react'
 import { UserService } from './services/userServices'
 import type { User } from './types/user.types'
+
+const slideDown = keyframes`
+  from {
+    transform: translateY(-20px);
+    max-height: 0;
+  }
+  to {
+    transform: translateY(0);
+    max-height: 200px;
+  }
+`
+
+const slideUp = keyframes`
+  from {
+    transform: translateY(0);
+    max-height: 200px;
+  }
+  to {
+    transform: translateY(-20px);
+    max-height: 0;
+  }
+`
 
 const BoxStyled = styled(Box)<BoxProps>(({ theme }) => ({
   height: '100vh',
@@ -194,6 +217,8 @@ function App() {
   const [users, setUsers] = useState<User[]>([])
   const controller = new AbortController()
 
+  const [display, setDisplay] = useState<boolean>(false)
+
   async function fetchUsers() {
     try {
       const response = await UserService.getAll(controller.signal)
@@ -248,6 +273,7 @@ function App() {
         </Toolbar>
       </AppBarStyled>
       <Toolbar />
+
       <Box display={'flex'}>
         <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
           <Drawer
@@ -353,10 +379,41 @@ function App() {
         </Box>
         <Box sx={{ paddingX: 4 }}>
           <Toolbar />
-          <Typography color="textPrimary" variant="h5" sx={{ padding: 4, fontWeight: 800 }}>
-            Recomendados
-          </Typography>
-          <Grid container spacing={4}>
+          <Button onClick={() => setDisplay((prev) => !prev)}>
+            <Typography sx={{ color: 'white' }}>{display ? 'hide' : 'show'}</Typography>
+          </Button>
+          <Box sx={{ display: display ? 'block' : 'none' }} flexGrow={1}>
+            <Slide
+              direction="right"
+              easing={{
+                enter: theme.transitions.easing.easeIn,
+                exit: theme.transitions.easing.sharp,
+              }}
+              in={display}
+            >
+              <Box
+                sx={{
+                  height: '60px',
+                  backgroundColor: 'purple',
+                  padding: '25px',
+                  marginY: '25px',
+                }}
+              >
+                <Typography
+                  color="textPrimary"
+                  variant="h5"
+                  sx={{ padding: 4, fontWeight: 800, display: 'none' }}
+                >
+                  Recomendados
+                </Typography>
+              </Box>
+            </Slide>
+          </Box>
+          <Grid
+            container
+            spacing={4}
+            sx={{ animation: `${!display ? slideUp : slideDown} 0.4s ease forwards` }}
+          >
             {videos.map((item, index) => (
               <Grid size={{ lg: 3, md: 4, sm: 6, xs: 12 }} key={index}>
                 <Box>
