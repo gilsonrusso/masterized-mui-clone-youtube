@@ -1,10 +1,11 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import App from './App.tsx'
 import './index.css'
 
-import { createTheme, CssBaseline, ThemeProvider } from '@mui/material'
+import { createTheme, ThemeProvider } from '@mui/material'
 import { blue, red } from '@mui/material/colors'
+import { RouterProvider } from 'react-router'
+import { router } from './router.tsx'
 
 const theme = createTheme({
   colorSchemes: {
@@ -48,8 +49,7 @@ const theme = createTheme({
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <App />
+      <RouterProvider router={router} />
     </ThemeProvider>
   </StrictMode>
 )
