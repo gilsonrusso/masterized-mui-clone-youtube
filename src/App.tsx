@@ -225,7 +225,7 @@ function App() {
             </List>
           </Drawer>
         </Box> */}
-        <Box sx={{ paddingX: 4 }}>
+        <Box sx={{ paddingX: 4, width: '100%' }}>
           <Toolbar />
           <Typography color="textPrimary" variant="h5" sx={{ padding: 4, fontWeight: 800 }}>
             Recomendados
